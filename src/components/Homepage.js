@@ -6,7 +6,7 @@ const Homepage = () => {
   return (
     <header className="App-header">
         <nav className="Top-nav">
-            <Link to="/Pizza" className="App-link" id="order-pizza">Order Now</Link>&nbsp;
+            <Link to="/pizza" className="App-link" id="order-pizza">Order Now</Link>&nbsp;
         </nav>      
     </header>
   );
