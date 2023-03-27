@@ -1,16 +1,48 @@
-import React from "react";
-// import { Routes, Route, Link } from "react-router-dom";
-// import Confirmation from "./Confirmation";
+import React, { useState, useEffect } from "react";
+import formSchema from "../validation/formSchema";
+import '../App.css'
+// import * as Yup from "yup";
 
-const onChange = () => {
-
+const initialValues = {
+    name: "",
+    address: "",
+    size: "",
+    jalapeños: false,
+    blackOlives: false,
+    pineapples: false,
+    mushrooms: false,
+    special: "",
 }
 
-const onSubmit = (e) => {
-    e.preventDefault();
-}
 
 const Form = () => {
+
+    const [values, setValues] = useState(initialValues);
+    // const [errors, setErrors] = useState(initialValues);
+    const [disabled, setDisabled] = useState(true);
+
+    useEffect(() => {
+        formSchema.isValid(values).then(valid => {
+            setDisabled(!valid);
+        });
+    }, [values]);
+
+    const onChange = (event) => {
+        const { name, type, value, checked } = event.target;
+        const updatedValue = type === 'checked' ? checked : value;
+        // Yup
+        //     .reach(formSchema, name)
+        //     .validate(value)
+        //     .then(valid => {
+        //         setErrors({...errors, [name]: ""})
+        //     });
+        setValues({...values, [name]: updatedValue});
+    }
+    
+    const onSubmit = (e) => {
+        e.preventDefault();
+    }
+
     return (
         <form id="pizza-form" onSubmit={onSubmit}>
         <label> Your Name:
@@ -18,6 +50,7 @@ const Form = () => {
                 type="text"
                 name="name"
                 id="name-input"
+                value={values.name}
                 placeholder="Your First and Last Name"
                 onChange={onChange}
             />
@@ -27,41 +60,50 @@ const Form = () => {
                 type="text"
                 name="address"
                 id="address-input"
+                value={values.address}
                 placeholder="Delivery Address"
                 onChange={onChange}
             />
         </label>
         <label> Select a Pizza Size:
             <select id="size-dropdown" name="size" onChange={onChange}>
-                <option value="select-size">Select a Size</option>
+                <option value="">Select a Size</option>
                 <option value="small">Small</option>
                 <option value="medium">Medium</option>
                 <option value="large">Large</option>
             </select>
         </label>
-        <label onChange={onChange}> Load up on the toppings:
+        <label> Load up on the toppings:
             <label> Jalapeños:
                 <input
                     type="checkbox"
                     name="jalapeños"
+                    checked={values.jalapeños}
+                    onChange={onChange}
                 />
             </label>
             <label> Black Olives:
                 <input
                     type="checkbox"
-                    name="black-olives"
+                    name="blackOlives"
+                    checked={values.blackOlives}
+                    onChange={onChange}
                 />
             </label>
             <label> Pineapple:
                 <input
                     type="checkbox"
-                    name="pineapple"
+                    name="pineapples"
+                    checked={values.pineapples}
+                    onChange={onChange}
                 />
             </label>
             <label> Mushrooms:
                 <input
                     type="checkbox"
                     name="mushrooms"
+                    checked={values.mushrooms}
+                    onChange={onChange}
                 />
             </label>
         </label>
@@ -72,12 +114,13 @@ const Form = () => {
                 type="text" 
                 id="special-text" 
                 name="special" 
+                value={values.special}
                 placeholder ="Any special instructions for the kitchen?" 
                 onChange={onChange}
             > 
             </textarea>
         </label>
-        <button id="order-button">Add to Order</button>
+        <button id="order-button" disabled={disabled}>Add to Order</button>
         </form>
     );
 };
