@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import formSchema from "../validation/formSchema";
 import '../App.css'
-// import * as Yup from "yup";
+import * as Yup from "yup";
 
 const initialValues = {
     name: "",
@@ -14,11 +14,16 @@ const initialValues = {
     special: "",
 }
 
+const initialErrorValues = {
+    name: "",
+    address: "",
+    size: "",
+}   
 
-const Form = () => {
+const Form = () => {  
 
     const [values, setValues] = useState(initialValues);
-    // const [errors, setErrors] = useState(initialValues);
+    const [errors, setErrors] = useState(initialErrorValues);
     const [disabled, setDisabled] = useState(true);
 
     useEffect(() => {
@@ -27,15 +32,15 @@ const Form = () => {
         });
     }, [values]);
 
-    const onChange = (event) => {
+    const onChange = event => {
         const { name, type, value, checked } = event.target;
-        const updatedValue = type === 'checked' ? checked : value;
-        // Yup
-        //     .reach(formSchema, name)
-        //     .validate(value)
-        //     .then(valid => {
-        //         setErrors({...errors, [name]: ""})
-        //     });
+        const updatedValue = type === 'checkbox' ? checked : value;
+        const setFormErrors = (name, value) => {
+            Yup.reach(formSchema, name).validate(value)
+                .then(() => setErrors({...errors, [name]: ""}))
+                .catch(err => setErrors({...errors, [name]: err.errors[0]}))
+        }     
+        setFormErrors(name, updatedValue);
         setValues({...values, [name]: updatedValue});
     }
     
@@ -44,7 +49,12 @@ const Form = () => {
     }
 
     return (
-        <form id="pizza-form" onSubmit={onSubmit}>
+     <form id="pizza-form" onSubmit={onSubmit}>
+        <div style={{color:'red'}}>
+            <div>{errors.name}</div>
+            <div>{errors.address}</div>
+            <div>{errors.size}</div>
+        </div>
         <label> Your Name:
             <input 
                 type="text"
@@ -66,7 +76,7 @@ const Form = () => {
             />
         </label>
         <label> Select a Pizza Size:
-            <select id="size-dropdown" name="size" onChange={onChange}>
+            <select id="size-dropdown" name="size" value={values.size} onChange={onChange}>
                 <option value="">Select a Size</option>
                 <option value="small">Small</option>
                 <option value="medium">Medium</option>
@@ -121,7 +131,7 @@ const Form = () => {
             </textarea>
         </label>
         <button id="order-button" disabled={disabled}>Add to Order</button>
-        </form>
+     </form>
     );
 };
 

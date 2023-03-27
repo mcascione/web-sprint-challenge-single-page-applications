@@ -11,7 +11,17 @@ const formSchema = Yup.object().shape({
         .min(10, "Delivery address must include at least 10 characters. Be sure to include your street number, street name, apartment or suite number (if applicable), city, state and zip Code."),
     size: Yup   
         .string()
-        .oneOf(["Small", "Medium", "Large"], "You must select a size.")
+        .oneOf(["small", "medium", "large"], "You must select a size."),
+    jalapeños: Yup
+        .boolean(),
+    blackOlives: Yup
+        .boolean(),
+    pineapples: Yup
+        .boolean(),
+    mushrooms: Yup
+        .boolean(),
+    special: Yup
+        .string()
 });
 
 export default formSchema;

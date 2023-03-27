@@ -9,8 +9,8 @@ const App = () => {
       <>
         <header className="App-header">
           <nav className="Top-nav">
-              <Link to="/" className="App-link">Home</Link>
-          </nav>      
+          <Link to="/" className="App-link">Home</Link>
+          </nav> 
           <h1>Bloomtech Eats</h1>
           <p>Fuel Your Coding Session with Pizza</p>
         </header>
