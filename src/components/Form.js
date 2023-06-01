@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import formSchema from "../validation/formSchema";
+import Confirmation from "./Confirmation";
 import "../App.css";
 import * as Yup from "yup";
 
@@ -25,6 +27,14 @@ const Form = () => {
   const [values, setValues] = useState(initialValues);
   const [errors, setErrors] = useState(initialErrorValues);
   const [disabled, setDisabled] = useState(true);
+  const navigate = useNavigate();
+  const isMountedRef = useRef(true);
+
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false; // Update the mounted state on component unmount
+    };
+  }, []);
 
   useEffect(() => {
     formSchema.isValid(values).then((valid) => {
@@ -50,8 +60,28 @@ const Form = () => {
 
     try {
       const response = await axios.post("https://reqres.in/api/orders", values);
-      console.log(response.data);
       setValues(initialValues);
+      const pizzaOrder = response.data;
+      console.log(pizzaOrder);
+
+      if (isMountedRef.current) {
+        // Check if the component is still mounted
+        setValues({
+          name: "",
+          address: "",
+          size: "",
+          jalapeños: false,
+          blackOlives: false,
+          pineapples: false,
+          mushrooms: false,
+          special: "",
+        });
+
+        const encodedPizzaOrder = encodeURIComponent(
+          JSON.stringify(pizzaOrder)
+        );
+        navigate(`/confirmation/${encodedPizzaOrder}`);
+      }
     } catch (err) {
       setErrors({
         customMessage: "An error occurred while making the request.",
