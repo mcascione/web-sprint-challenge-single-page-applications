@@ -53,13 +53,16 @@ const Form = () => {
       console.log(response.data);
       setValues(initialValues);
     } catch (err) {
-      console.log(err);
+      setErrors({
+        customMessage: "An error occurred while making the request.",
+      });
     }
   };
 
   return (
     <form id="pizza-form" onSubmit={onSubmit}>
       <div style={{ color: "red" }}>
+        {errors && errors.customMessage && <div>{errors.customMessage}</div>}
         <div>{errors.name}</div>
         <div>{errors.address}</div>
         <div>{errors.size}</div>
